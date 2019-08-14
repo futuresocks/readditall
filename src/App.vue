@@ -1,28 +1,61 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>readditor</h1>
+    <input v-model="subreddit" type="text" name="subreddit">
+    <button v-on:click="getPosts"type="button" name="button"></button>
+    <div id="feeds">
+      <div v-for="(posts, sub) in posts" class="feed">
+        <h1>r/{{sub}} <button v-on:click="update(sub)">Refresh</button></h1>
+        <ul>
+          <li v-for="post in posts"><strong>{{post.title}}</strong><button v-on:click="selectPost(post)">Read This</button></li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'app',
-  components: {
-    HelloWorld
+  data(){
+    return {
+      subreddit: "",
+      posts: {},
+      selectedPost: null
+    }
+  },
+  methods: {
+    update: function(sub){
+      this.subreddit = sub
+      this.getPosts()
+    },
+    selectPost: function(post){
+      this.selectedPost = post
+    },
+    getPosts: function(){
+      fetch(`https://www.reddit.com/r/${this.subreddit}.json`)
+      .then(res => res.json())
+      .then(posts => {
+        const customPosts = posts.data.children.map(post => {
+          return {
+            title: post.data.title,
+            text: post.data.selftext,
+            user: post.data.author,
+            url: post.data.url
+          }
+        })
+        this.posts[this.subreddit] = customPosts
+        this.subreddit = ""
+      })
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+ #feeds {
+   display: flex;
+   flex-direction: wrap;
+ }
 </style>
