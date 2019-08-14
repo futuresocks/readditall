@@ -11,6 +11,10 @@
         </ul>
       </div>
     </div>
+    <modal name="post-container">
+      {{selectedPost.text}}
+      <button @click="hide"type="button" name="button">Close</button>
+    </modal>
   </div>
 </template>
 
@@ -26,12 +30,19 @@ export default {
     }
   },
   methods: {
+    show () {
+      this.$modal.show('post-container');
+    },
+    hide () {
+      this.$modal.hide('post-container');
+    },
     update: function(sub){
       this.subreddit = sub
       this.getPosts()
     },
     selectPost: function(post){
       this.selectedPost = post
+      this.show()
     },
     getPosts: function(){
       fetch(`https://www.reddit.com/r/${this.subreddit}.json`)
@@ -54,8 +65,8 @@ export default {
 </script>
 
 <style>
- #feeds {
-   display: flex;
-   flex-direction: wrap;
- }
+#feeds {
+  display: flex;
+  flex-direction: wrap;
+}
 </style>
