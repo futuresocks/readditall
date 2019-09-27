@@ -80,6 +80,7 @@ export default {
 #feeds {
   display: flex;
   flex-direction: wrap;
+  width: 100%;
 }
 
 .feed {
